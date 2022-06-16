@@ -1,0 +1,67 @@
+
+.d-block {
+  display: block;
+}
+
+.booksheft-header {
+  background-color: black;
+  color: white;
+  text-align: center;
+  padding-top: 3px;
+  padding-bottom: 3px;
+  margin-bottom:10px;
+} 
+.box-border{
+  border: 1px solid  black;
+  border-radius: 2px;
+  padding: 10px;
+}
+.mt-20px{
+  margin-top: 20px;
+}
+
+.row::after{
+  content: "";
+  clear: both;
+  display: table;
+}
+
+[class*="col-"]{
+  width: 100%;
+  float: left;
+}
+.m-5{margin: 5px;}
+
+.black-button{
+  background-color: black;
+  color: white;
+  border-radius: 1px;
+  opacity: 0.9;
+  border: 1px solid black;
+  padding-left: 4px;
+  padding-right: 4px;
+  padding-top: 3px;
+  padding-bottom: 3px;
+}
+.black-button:hover{
+  color: black;
+  background-color: white;
+  border-radius: 3px;
+  border: 1px solid gray;
+}
+
+@media only screen and (min-width:768px) {
+  .col-1 {width: 8.33%;}
+  .col-2 {width: 16.66%;}
+  .col-3 {width: 25%;}
+  .col-4 {width: 33.33%;}
+  .col-5 {width: 41.66%;}
+  .col-6 {width: 50%;}
+  .col-7 {width: 58.33%;}
+  .col-8 {width: 66.66%;}
+  .col-9 {width: 75%;}
+  .col-10 {width: 83.33%;}
+  .col-11 {width: 91.66%;}
+  .col-12 {width: 100%;}
+  
+}
