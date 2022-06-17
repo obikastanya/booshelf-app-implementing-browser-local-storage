@@ -17,7 +17,8 @@ class PageEvent {
     const formData = this.serializeBookForm();
     const serialNum = this.storageModel.generateSerialNum();
     formData.serialNum = serialNum;
-    console.log(formData);
+    this.storageModel.saveNewBook("BOOK" + serialNum, formData);
+    this.storageModel.updateBookList("BOOK" + serialNum);
   }
 
   serializeBookForm() {
@@ -38,6 +39,7 @@ class StorageModel {
   constructor() {
     this.keys = {
       serialNum: "BOOKSERIALNUM",
+      bookList: "BOOKLIST",
     };
   }
 
@@ -50,14 +52,31 @@ class StorageModel {
     return true;
   }
 
+  saveNewBook(key, book) {
+    localStorage.setItem(key, JSON.stringify(book));
+  }
+  updateBookList(newBookKey) {
+    let bookKeys = localStorage.getItem(this.keys.bookList);
+    if (bookKeys) {
+      bookKeys = JSON.parse(bookKeys);
+    } else {
+      bookKeys = [];
+    }
+    bookKeys.push(newBookKey);
+
+    localStorage.setItem(this.keys.bookList, JSON.stringify(bookKeys));
+  }
+
   generateSerialNum() {
     let serialNum = localStorage.getItem(this.keys.serialNum);
+    console.log(" first ", serialNum);
     if (serialNum) {
       serialNum = parseInt(serialNum) + 1;
     } else {
       serialNum = 1;
     }
     this.updateSerialNum(serialNum);
+    console.log(serialNum);
     return serialNum;
   }
 
