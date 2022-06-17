@@ -1,5 +1,6 @@
 class PageEvent {
   constructor() {
+    this.storageModel = new StorageModel();
     // prevent the function to loose this contex
     this.bindEvent = this.bindEvent.bind(this);
     this.submitNewBook = this.submitNewBook.bind(this);
@@ -9,13 +10,16 @@ class PageEvent {
     const newBookForm = document.getElementById("newBookFormId");
     newBookForm.addEventListener("submit", this.submitNewBook);
   }
+
   submitNewBook(evnt) {
     //   prevent refresh
     evnt.preventDefault();
-
     const formData = this.serializeBookForm();
+    const serialNum = this.storageModel.generateSerialNum();
+    formData.serialNum = serialNum;
     console.log(formData);
   }
+
   serializeBookForm() {
     const newBookForm = document.getElementById("newBookFormId");
     // new formData is used to get all data in form,
@@ -49,10 +53,12 @@ class StorageModel {
   generateSerialNum() {
     let serialNum = localStorage.getItem(this.keys.serialNum);
     if (serialNum) {
-      this.updateSerialNum(serialNum + 1);
-      return serialNum + 1;
-      return 1;
+      serialNum = parseInt(serialNum) + 1;
+    } else {
+      serialNum = 1;
     }
+    this.updateSerialNum(serialNum);
+    return serialNum;
   }
 
   updateSerialNum(newSerialNum) {
