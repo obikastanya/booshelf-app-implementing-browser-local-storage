@@ -1,0 +1,4 @@
+class StorageModel{}
+
+class PageEvent{}
+

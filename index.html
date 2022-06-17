@@ -21,13 +21,16 @@ Fitur
     </header>
     <section class="row">
       <section class="col col-4">
-        <form class="box-border m-5">
+        <form class="box-border m-5 ">
           <label>Judul</label>
-          <input class="d-block" type="text" />
+          <input class="d-block w-half" type="text" />
           <label for="">Penulis</label>
-          <input type="text" class="d-block" />
+          <input type="text"  class="d-block w-half" />
           <label for="">Tahun</label>
-          <input type="text" class="d-block" />
+          <input type="number" min="1900" max="2099" step="1" class="d-block w-half" />
+          <label for="isCompletedId">Selesai dibaca</label>
+          <input type="checkbox" id="isCompletedId"/>
+        <br/>
           <button type="submit" class="mt-20px black-button">
             Masukkan Buku ke rak Belum Baca
           </button>
@@ -35,7 +38,7 @@ Fitur
 
         <form class="box-border m-5">
           <label>Judul</label>
-          <input class="d-block" type="text" />
+          <input class="d-block w-half" type="text" />
           <button type="submit" class="mt-20px black-button">Cari</button>
         </form>
       </section>
@@ -49,5 +52,9 @@ Fitur
         </div>
       </section>
     </section>
+    <footer>
+      <div class="booksheft-footer"><p><small>Copyright © by Obi Kastanya</small></p></div>
+      </footer>
+      <script src="./js/events.js"></script>
   </body>
 </html>
