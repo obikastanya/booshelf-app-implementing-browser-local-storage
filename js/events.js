@@ -5,8 +5,8 @@ class Element {
       <h2>${bookData.title}</h2>
       <p>Penulis: ${bookData.author}</p>
       <p>Tahun : ${bookData.year}</p>
-      <button class="black-button" data-id=${bookData.serialNum}>Sudah dibaca</button>
-      <button class="white-button" data-id=${bookData.serialNum}>Hapus</button>
+      <button class="black-button move-book-button" data-id=${bookData.serialNum}>Sudah dibaca</button>
+      <button class="white-button delete-book-button" data-id=${bookData.serialNum}>Hapus</button>
     </div>
     `;
   }
@@ -19,13 +19,32 @@ class PageEvent {
     // prevent the function to loose this contex
     this.bindEvent = this.bindEvent.bind(this);
     this.submitNewBook = this.submitNewBook.bind(this);
+
+    this.customEvent = {
+      bindMoveBook: "BINDMOVEBOOKEVENT",
+      bindDeleteBook: "BINDMOVEBOOKEVENT",
+    };
   }
 
   bindEvent() {
     const newBookForm = document.getElementById("newBookFormId");
     newBookForm.addEventListener("submit", this.submitNewBook);
+    // create event to register event for move books action
+    document.addEventListener(
+      this.customEvent.bindMoveBook,
+      this.bindMoveEventForButtons
+    );
+
+    //create event to register event to delete book action
+
+    document.addEventListener(
+      this.customEvent.bindDeleteBook,
+      this.bindDeleteEventForButtons
+    );
     this.showInCompleteBooks();
     this.showReadedBooks();
+    document.dispatchEvent(new Event(this.customEvent.bindDeleteBook));
+    document.dispatchEvent(new Event(this.customEvent.bindMoveBook));
   }
 
   showReadedBooks() {
@@ -75,6 +94,20 @@ class PageEvent {
     }
     return newBookData;
   }
+
+  bindMoveEventForButtons() {
+    let moveButtons = document.getElementsByClassName("move-book-button");
+    for (let button of moveButtons) {
+      button.onclick = (event) => {};
+    }
+  }
+
+  bindDeleteEventForButtons() {
+    let moveButtons = document.getElementsByClassName("delete-book-button");
+    for (let button of moveButtons) {
+      button.onclick = (event) => {};
+    }
+  }
 }
 
 class StorageModel {
@@ -118,7 +151,6 @@ class StorageModel {
       serialNum = 1;
     }
     this.updateSerialNum(serialNum);
-    console.log(serialNum);
     return serialNum;
   }
 
