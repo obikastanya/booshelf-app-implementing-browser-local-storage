@@ -169,10 +169,15 @@ class PageEvent {
     let parentContainerName = containerElement.parentElement.getAttribute("id");
 
     if (parentContainerName == "inCompletedBookContainerId") {
+      
+      copyOfContainerElement.getElementsByClassName('move-book-button')[0].innerText='Belum dibaca'
       document
         .getElementById("completedBookContainerId")
         .appendChild(copyOfContainerElement);
     } else {
+
+
+      copyOfContainerElement.getElementsByClassName('move-book-button')[0].innerText='Sudah dibaca'
       document
         .getElementById("inCompletedBookContainerId")
         .appendChild(copyOfContainerElement);
