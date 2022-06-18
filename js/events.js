@@ -1,12 +1,16 @@
 class Element {
   book(bookData) {
+    let moveButtonLabel = bookData.isCompleted
+      ? "Belum dibaca"
+      : "Sudah dibaca";
+
     return `
     <div class="bg-light p-5 my-5" id='container-${bookData.serialNum}'>
       <h2>${bookData.title}</h2>
       <p>Penulis: ${bookData.author}</p>
       <p>Tahun : ${bookData.year}</p>
       <button class="black-button move-book-button" data-id=${bookData.serialNum} 
-      containerId='container-${bookData.serialNum}'>Sudah dibaca</button>
+      containerId='container-${bookData.serialNum}'>${moveButtonLabel}</button>
       <button class="white-button delete-book-button" data-id=${bookData.serialNum} 
       container-id='container-${bookData.serialNum}'>Hapus</button>
     </div>
