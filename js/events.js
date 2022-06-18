@@ -1,6 +1,21 @@
+class Element {
+  book(bookData) {
+    return `
+    <div class="bg-light p-5 my-5">
+      <h2>${bookData.title}</h2>
+      <p>Penulis: ${bookData.author}</p>
+      <p>Tahun : ${bookData.year}</p>
+      <button class="black-button" data-id=${bookData.serialNum}>Sudah dibaca</button>
+      <button class="white-button" data-id=${bookData.serialNum}>Hapus</button>
+    </div>
+    `;
+  }
+}
+
 class PageEvent {
   constructor() {
     this.storageModel = new StorageModel();
+    this.elemnt = new Element();
     // prevent the function to loose this contex
     this.bindEvent = this.bindEvent.bind(this);
     this.submitNewBook = this.submitNewBook.bind(this);
@@ -9,10 +24,19 @@ class PageEvent {
   bindEvent() {
     const newBookForm = document.getElementById("newBookFormId");
     newBookForm.addEventListener("submit", this.submitNewBook);
+    this.showBooks();
   }
 
-  showBooks(){
-      let books=[{},{},{}]
+  showBooks() {
+    let books = this.storageModel.getBooks();
+    let booksElement = books.map(this.elemnt.book);
+    let completedBookContainer = document.getElementById(
+      "completedBookContainerId"
+    );
+    for (let bookElement of booksElement) {
+      completedBookContainer.innerHTML += bookElement;
+    }
+    console.log(booksElement);
   }
 
   submitNewBook(evnt) {
@@ -86,6 +110,15 @@ class StorageModel {
 
   updateSerialNum(newSerialNum) {
     localStorage.setItem(this.keys.serialNum, newSerialNum);
+  }
+  getBooks() {
+    let booksId = JSON.parse(localStorage.getItem(this.keys.bookList));
+    let books = [];
+    for (let id of booksId) {
+      let book = JSON.parse(localStorage.getItem(id));
+      books.push(book);
+    }
+    return books;
   }
 }
 
