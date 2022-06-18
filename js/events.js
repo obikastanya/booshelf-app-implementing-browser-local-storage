@@ -71,8 +71,8 @@ class PageEvent {
   findBook(event) {
     event.preventDefault();
     // clear book list
-    document.getElementById("inCompletedBookContainerId").innerHTML = "";
-    document.getElementById("completedBookContainerId").innerHTML = "";
+    document.getElementById("inCompletedBookContainerId").innerHTML = "<h1>BELUM SELESAI DIBACA</h1>";
+    document.getElementById("completedBookContainerId").innerHTML = "<h1>SELESAI DIBACA</h1>";
 
     let keyword = document.getElementById("keywordFilterId").value;
     let customFilter = (obj) => true;
@@ -84,6 +84,10 @@ class PageEvent {
 
     this.showInCompleteBooks(customFilter);
     this.showReadedBooks(customFilter);
+
+
+    document.dispatchEvent(new Event(this.customEvent.bindDeleteBook));
+    document.dispatchEvent(new Event(this.customEvent.bindMoveBook));
     }
 
   showInCompleteBooks(customFilter= (obj) => true) {
