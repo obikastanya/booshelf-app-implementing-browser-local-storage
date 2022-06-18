@@ -11,6 +11,10 @@ class PageEvent {
     newBookForm.addEventListener("submit", this.submitNewBook);
   }
 
+  showBooks(){
+      let books=[{},{},{}]
+  }
+
   submitNewBook(evnt) {
     //   prevent refresh
     evnt.preventDefault();

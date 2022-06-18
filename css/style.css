@@ -1,4 +1,3 @@
-
 .d-block {
   display: block;
 }
@@ -9,9 +8,8 @@
   text-align: center;
   padding-top: 3px;
   padding-bottom: 3px;
-  margin-bottom:10px;
-} 
-
+  margin-bottom: 10px;
+}
 
 .booksheft-footer {
   background-color: black;
@@ -19,31 +17,33 @@
   text-align: center;
   padding-top: 3px;
   padding-bottom: 3px;
-  margin-top:10px;
-} 
+  margin-top: 10px;
+}
 
-.box-border{
-  border: 1px solid  black;
+.box-border {
+  border: 1px solid black;
   border-radius: 2px;
   padding: 10px;
 }
-.mt-20px{
+.mt-20px {
   margin-top: 20px;
 }
 
-.row::after{
+.row::after {
   content: "";
   clear: both;
   display: table;
 }
 
-[class*="col-"]{
+[class*="col-"] {
   width: 100%;
   float: left;
 }
-.m-5{margin: 5px;}
+.m-5 {
+  margin: 5px;
+}
 
-.black-button{
+.black-button {
   background-color: black;
   color: white;
   border-radius: 1px;
@@ -54,33 +54,89 @@
   padding-top: 3px;
   padding-bottom: 3px;
 }
-.black-button:hover{
+.white-button {
+  color: grey;
+  background-color: white;
+  border-radius: 1px;
+  opacity: 0.9;
+  border: 1px solid grey;
+  padding-left: 4px;
+  padding-right: 4px;
+  padding-top: 3px;
+  padding-bottom: 3px;
+}
+.black-button:hover {
   color: black;
   background-color: white;
-  border-radius: 3px;
   border: 1px solid gray;
 }
 
-.w-half{
+.white-button:hover {
+  background-color: #c50707;
+  color: white;
+  border: 1px solid #c50707;
+}
+
+.w-half {
   width: 50%;
 }
-@media only screen and (min-width:768px) {
-  .col-1 {width: 8.33%;}
-  .col-2 {width: 16.66%;}
-  .col-3 {width: 25%;}
-  .col-4 {width: 33.33%;}
-  .col-5 {width: 41.66%;}
-  .col-6 {width: 50%;}
-  .col-7 {width: 58.33%;}
-  .col-8 {width: 66.66%;}
-  .col-9 {width: 75%;}
-  .col-10 {width: 83.33%;}
-  .col-11 {width: 91.66%;}
-  .col-12 {width: 100%;}
-  
-
+.bg-light {
+  background-color: #f8f9fa;
 }
-@media only screen and (min-width:320px) {
+
+.mx-5 {
+  margin: 0 10px;
+}
+.p-5 {
+  padding-top: 5px;
+  padding-left: 10px;
+  padding-bottom: 20px;
+  padding-right: 10px;
+}
+
+.my-5 {
+  margin-top: 5px;
+  margin-bottom: 10px;
+}
+@media only screen and (min-width: 768px) {
+  .col-1 {
+    width: 8.33%;
+  }
+  .col-2 {
+    width: 16.66%;
+  }
+  .col-3 {
+    width: 25%;
+  }
+  .col-4 {
+    width: 33.33%;
+  }
+  .col-5 {
+    width: 41.66%;
+  }
+  .col-6 {
+    width: 50%;
+  }
+  .col-7 {
+    width: 58.33%;
+  }
+  .col-8 {
+    width: 66.66%;
+  }
+  .col-9 {
+    width: 75%;
+  }
+  .col-10 {
+    width: 83.33%;
+  }
+  .col-11 {
+    width: 91.66%;
+  }
+  .col-12 {
+    width: 100%;
+  }
+}
+@media only screen and (min-width: 320px) {
   .w-half {
     width: 80%;
   }
