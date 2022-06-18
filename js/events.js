@@ -1,12 +1,14 @@
 class Element {
   book(bookData) {
     return `
-    <div class="bg-light p-5 my-5">
+    <div class="bg-light p-5 my-5" id='container-${bookData.serialNum}'>
       <h2>${bookData.title}</h2>
       <p>Penulis: ${bookData.author}</p>
       <p>Tahun : ${bookData.year}</p>
-      <button class="black-button move-book-button" data-id=${bookData.serialNum}>Sudah dibaca</button>
-      <button class="white-button delete-book-button" data-id=${bookData.serialNum}>Hapus</button>
+      <button class="black-button move-book-button" data-id=${bookData.serialNum} 
+      containerId='container-${bookData.serialNum}'>Sudah dibaca</button>
+      <button class="white-button delete-book-button" data-id=${bookData.serialNum} 
+      container-id='container-${bookData.serialNum}'>Hapus</button>
     </div>
     `;
   }
@@ -19,6 +21,9 @@ class PageEvent {
     // prevent the function to loose this contex
     this.bindEvent = this.bindEvent.bind(this);
     this.submitNewBook = this.submitNewBook.bind(this);
+    this.bindDeleteEventForButtons = this.bindDeleteEventForButtons.bind(this);
+    this.bindMoveEventForButtons = this.bindMoveEventForButtons.bind(this);
+    this.deleteBook = this.deleteBook.bind(this);
 
     this.customEvent = {
       bindMoveBook: "BINDMOVEBOOKEVENT",
@@ -61,6 +66,7 @@ class PageEvent {
     };
 
     let books = this.storageModel.getBooks();
+    console.log(books);
     let booksElement = books
       .filter(filterByCompletedStatus)
       .map(this.elemnt.book);
@@ -105,8 +111,20 @@ class PageEvent {
   bindDeleteEventForButtons() {
     let moveButtons = document.getElementsByClassName("delete-book-button");
     for (let button of moveButtons) {
-      button.onclick = (event) => {};
+      button.onclick = this.deleteBook;
     }
+  }
+
+  deleteBook(event) {
+    let containerId = event.target.getAttribute("container-id");
+    let bookId = event.target.getAttribute("data-id");
+
+    // remove from localStorage
+    this.storageModel.removeBook(bookId);
+
+    // remove from page
+    let containerElement = document.getElementById(containerId);
+    containerElement.remove();
   }
 }
 
@@ -141,6 +159,19 @@ class StorageModel {
     bookKeys.push(this.keys.bookIdPrefix + newBookKey);
 
     localStorage.setItem(this.keys.bookList, JSON.stringify(bookKeys));
+  }
+  removeBook(bookId) {
+    // remove record
+    localStorage.removeItem(`${this.keys.bookIdPrefix}${bookId}`);
+
+    // remove from list of books
+    let booksId = JSON.parse(localStorage.getItem(this.keys.bookList));
+    booksId = booksId.filter((randomBookId) => {
+      return randomBookId != `${this.keys.bookIdPrefix}${bookId}`;
+    });
+
+    // update book
+    localStorage.setItem(this.keys.bookList, JSON.stringify(booksId));
   }
 
   generateSerialNum() {
