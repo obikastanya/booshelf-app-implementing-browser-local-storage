@@ -120,6 +120,19 @@ class PageEvent {
     formData.serialNum = serialNum;
     this.storageModel.saveNewBook(serialNum, formData);
     this.storageModel.updateBookList(serialNum);
+    
+    let newBookView=this.elemnt.book(formData)
+    if(formData.isCompleted){
+      document.getElementById('completedBookContainerId').innerHTML+=newBookView
+    }
+    else{
+      document.getElementById('inCompletedBookContainerId').innerHTML+=newBookView
+    }
+    
+    document.dispatchEvent(new Event(this.customEvent.bindDeleteBook));
+    document.dispatchEvent(new Event(this.customEvent.bindMoveBook));
+    
+
   }
 
   serializeBookForm() {
