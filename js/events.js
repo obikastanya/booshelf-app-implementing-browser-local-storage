@@ -29,6 +29,7 @@ class PageEvent {
     this.bindMoveEventForButtons = this.bindMoveEventForButtons.bind(this);
     this.deleteBook = this.deleteBook.bind(this);
     this.moveBook = this.moveBook.bind(this);
+    this.findBook=this.findBook.bind(this)
 
     this.customEvent = {
       bindMoveBook: "BINDMOVEBOOKEVENT",
@@ -38,6 +39,9 @@ class PageEvent {
 
   bindEvent() {
     const newBookForm = document.getElementById("newBookFormId");
+    const findBookForm = document.getElementById("findBookFormId");
+
+    findBookForm.addEventListener("submit", this.findBook);
     newBookForm.addEventListener("submit", this.submitNewBook);
     // create event to register event for move books action
     document.addEventListener(
@@ -50,26 +54,49 @@ class PageEvent {
       this.customEvent.bindDeleteBook,
       this.bindDeleteEventForButtons
     );
+
+
     this.showInCompleteBooks();
     this.showReadedBooks();
+    
     document.dispatchEvent(new Event(this.customEvent.bindDeleteBook));
     document.dispatchEvent(new Event(this.customEvent.bindMoveBook));
+  
   }
 
-  showReadedBooks() {
-    return this.showBooks("completedBookContainerId");
+  showReadedBooks(customFilter= (obj) => true) {
+    return this.showBooks("completedBookContainerId", true, customFilter);
   }
 
-  showInCompleteBooks() {
-    return this.showBooks("inCompletedBookContainerId", false);
+  findBook(event) {
+    event.preventDefault();
+    // clear book list
+    document.getElementById("inCompletedBookContainerId").innerHTML = "";
+    document.getElementById("completedBookContainerId").innerHTML = "";
+
+    let keyword = document.getElementById("keywordFilterId").value;
+    let customFilter = (obj) => true;
+
+    if (keyword) {
+      customFilter = (obj) => {
+        return obj.title.toLowerCase().indexOf(keyword) !== -1};
+    }
+
+    this.showInCompleteBooks(customFilter);
+    this.showReadedBooks(customFilter);
+    }
+
+  showInCompleteBooks(customFilter= (obj) => true) {
+    return this.showBooks("inCompletedBookContainerId", false, customFilter);
   }
 
-  showBooks(containerId, isCompletedReading = true) {
+  showBooks(containerId, isCompletedReading = true, customFilter) {
     let filterByCompletedStatus = (book) => {
       return book.isCompleted === isCompletedReading;
     };
 
     let books = this.storageModel.getBooks();
+    books = books.filter(customFilter);
     let booksElement = books
       .filter(filterByCompletedStatus)
       .map(this.elemnt.book);
