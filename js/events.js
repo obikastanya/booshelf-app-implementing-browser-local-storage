@@ -24,19 +24,33 @@ class PageEvent {
   bindEvent() {
     const newBookForm = document.getElementById("newBookFormId");
     newBookForm.addEventListener("submit", this.submitNewBook);
-    this.showBooks();
+    this.showInCompleteBooks();
+    this.showReadedBooks();
   }
 
-  showBooks() {
+  showReadedBooks() {
+    return this.showBooks("completedBookContainerId");
+  }
+
+  showInCompleteBooks() {
+    return this.showBooks("inCompletedBookContainerId", false);
+  }
+
+  showBooks(containerId, isCompletedReading = true) {
+    let filterByCompletedStatus = (book) => {
+      return book.isCompleted === isCompletedReading;
+    };
+
     let books = this.storageModel.getBooks();
-    let booksElement = books.map(this.elemnt.book);
-    let completedBookContainer = document.getElementById(
-      "completedBookContainerId"
-    );
+    let booksElement = books
+      .filter(filterByCompletedStatus)
+      .map(this.elemnt.book);
+
+    let completedBookContainer = document.getElementById(containerId);
+
     for (let bookElement of booksElement) {
       completedBookContainer.innerHTML += bookElement;
     }
-    console.log(booksElement);
   }
 
   submitNewBook(evnt) {
