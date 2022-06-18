@@ -10,7 +10,7 @@ class Element {
       <p>Penulis: ${bookData.author}</p>
       <p>Tahun : ${bookData.year}</p>
       <button class="black-button move-book-button" data-id=${bookData.serialNum} 
-      containerId='container-${bookData.serialNum}'>${moveButtonLabel}</button>
+      container-id='container-${bookData.serialNum}'>${moveButtonLabel}</button>
       <button class="white-button delete-book-button" data-id=${bookData.serialNum} 
       container-id='container-${bookData.serialNum}'>Hapus</button>
     </div>
@@ -28,6 +28,7 @@ class PageEvent {
     this.bindDeleteEventForButtons = this.bindDeleteEventForButtons.bind(this);
     this.bindMoveEventForButtons = this.bindMoveEventForButtons.bind(this);
     this.deleteBook = this.deleteBook.bind(this);
+    this.moveBook = this.moveBook.bind(this);
 
     this.customEvent = {
       bindMoveBook: "BINDMOVEBOOKEVENT",
@@ -45,7 +46,6 @@ class PageEvent {
     );
 
     //create event to register event to delete book action
-
     document.addEventListener(
       this.customEvent.bindDeleteBook,
       this.bindDeleteEventForButtons
@@ -70,7 +70,6 @@ class PageEvent {
     };
 
     let books = this.storageModel.getBooks();
-    console.log(books);
     let booksElement = books
       .filter(filterByCompletedStatus)
       .map(this.elemnt.book);
@@ -108,7 +107,7 @@ class PageEvent {
   bindMoveEventForButtons() {
     let moveButtons = document.getElementsByClassName("move-book-button");
     for (let button of moveButtons) {
-      button.onclick = (event) => {};
+      button.onclick = this.moveBook;
     }
   }
 
@@ -129,6 +128,33 @@ class PageEvent {
     // remove from page
     let containerElement = document.getElementById(containerId);
     containerElement.remove();
+  }
+  moveBook(event) {
+    let containerId = event.target.getAttribute("container-id");
+    let bookId = event.target.getAttribute("data-id");
+
+    // update completed status
+    this.storageModel.updateCompletedStatus(bookId);
+
+    // move book
+    let containerElement = document.getElementById(containerId);
+    let copyOfContainerElement = containerElement.cloneNode(true);
+    let parentContainerName = containerElement.parentElement.getAttribute("id");
+
+    if (parentContainerName == "inCompletedBookContainerId") {
+      document
+        .getElementById("completedBookContainerId")
+        .appendChild(copyOfContainerElement);
+    } else {
+      document
+        .getElementById("inCompletedBookContainerId")
+        .appendChild(copyOfContainerElement);
+    }
+    containerElement.remove();
+
+    // Element the move to another place lose his event, we need to rebind them.
+    document.dispatchEvent(new Event(this.customEvent.bindDeleteBook));
+    document.dispatchEvent(new Event(this.customEvent.bindMoveBook));
   }
 }
 
@@ -176,6 +202,17 @@ class StorageModel {
 
     // update book
     localStorage.setItem(this.keys.bookList, JSON.stringify(booksId));
+  }
+  updateCompletedStatus(bookId) {
+    let book = JSON.parse(
+      localStorage.getItem(`${this.keys.bookIdPrefix}${bookId}`)
+    );
+    book.isCompleted = !book.isCompleted;
+
+    localStorage.setItem(
+      `${this.keys.bookIdPrefix}${bookId}`,
+      JSON.stringify(book)
+    );
   }
 
   generateSerialNum() {
