@@ -1,7 +1,9 @@
 .d-block {
   display: block;
 }
-
+.filler-height {
+  height: 300px;
+}
 .booksheft-header {
   background-color: black;
   color: white;
