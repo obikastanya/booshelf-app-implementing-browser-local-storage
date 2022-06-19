@@ -207,6 +207,11 @@ class PageEvent {
     form.year.value = book.year;
     form.isCompleted.checked = book.isCompleted;
 
+    // keep some data in button update
+    let updateButton = document.getElementById("cancel-update-button-id");
+    updateButton.setAttribute("data-id", book.serialNum);
+    updateButton.setAttribute("container-id", `container-${book.serialNum}`);
+
     this.showUpdateButtons();
   }
 
