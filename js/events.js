@@ -38,6 +38,7 @@ class PageEvent {
     this.findBook = this.findBook.bind(this);
     this.editBook = this.editBook.bind(this);
     this.cancelUpdate = this.cancelUpdate.bind(this);
+    this.updateBook = this.updateBook.bind(this);
 
     this.customEvent = {
       bindMoveBook: "BINDMOVEBOOKEVENT",
@@ -74,6 +75,10 @@ class PageEvent {
     document
       .getElementById("cancel-update-button-id")
       .addEventListener("click", this.cancelUpdate);
+
+    document
+      .getElementById("update-book-button-id")
+      .addEventListener("click", this.updateBook);
 
     this.showInCompleteBooks();
     this.showReadedBooks();
@@ -133,7 +138,32 @@ class PageEvent {
       completedBookContainer.innerHTML += bookElement;
     }
   }
+  updateBook(event) {
+    let containerId = event.target.getAttribute("container-id");
+    let bookId = event.target.getAttribute("data-id");
+    let updatedBook = this.serializeBookForm();
+    updatedBook.serialNum = bookId;
 
+    this.renewBookView(containerId, bookId, updatedBook);
+    this.storageModel.updateBookData(bookId, updatedBook);
+    this.resetNewBookForm();
+  }
+  renewBookView(containerId, bookId, updateBook) {
+    let book = this.storageModel.getBook(bookId);
+
+    // update book Element
+    let updatedBookElement = this.elemnt.book(updateBook);
+
+    let bookContainer = document.getElementById(containerId);
+    bookContainer.innerHTML = updatedBookElement;
+    this.rebindButtonEvent();
+
+    if (book.isCompleted != updateBook.isCompleted) {
+      // trigger event to move book
+      let buttonMove = bookContainer.querySelector(".move-book-button");
+      buttonMove.dispatchEvent(new Event("click"));
+    }
+  }
   submitNewBook(evnt) {
     //   prevent refresh
     evnt.preventDefault();
@@ -153,6 +183,7 @@ class PageEvent {
     }
 
     this.rebindButtonEvent();
+    this.resetNewBookForm();
   }
 
   serializeBookForm() {
@@ -208,7 +239,7 @@ class PageEvent {
     form.isCompleted.checked = book.isCompleted;
 
     // keep some data in button update
-    let updateButton = document.getElementById("cancel-update-button-id");
+    let updateButton = document.getElementById("update-book-button-id");
     updateButton.setAttribute("data-id", book.serialNum);
     updateButton.setAttribute("container-id", `container-${book.serialNum}`);
 
@@ -315,6 +346,12 @@ class StorageModel {
 
   saveNewBook(key, book) {
     localStorage.setItem(this.keys.bookIdPrefix + key, JSON.stringify(book));
+  }
+  updateBookData(bookId, updatedBook) {
+    localStorage.setItem(
+      this.keys.bookIdPrefix + bookId,
+      JSON.stringify(updatedBook)
+    );
   }
   updateBookList(newBookKey) {
     let bookKeys = localStorage.getItem(this.keys.bookList);

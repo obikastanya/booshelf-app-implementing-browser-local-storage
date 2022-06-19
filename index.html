@@ -15,9 +15,9 @@
       <section class="col col-4">
         <form class="box-border m-5" id="newBookFormId">
           <label>Judul</label>
-          <input class="d-block w-half" type="text" name="title" />
+          <input class="d-block w-half" type="text" name="title" required />
           <label for="">Penulis</label>
-          <input type="text" class="d-block w-half" name="author" />
+          <input type="text" class="d-block w-half" name="author" required />
           <label for="">Tahun</label>
           <input
             type="number"
@@ -26,6 +26,7 @@
             step="1"
             name="year"
             class="d-block w-half"
+            required
           />
           <label for="isCompletedId">Selesai dibaca</label>
           <input type="checkbox" id="isCompletedId" name="isCompleted" />
