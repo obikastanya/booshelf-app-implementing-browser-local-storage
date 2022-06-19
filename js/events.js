@@ -25,26 +25,24 @@ class PageEvent {
     this.storageModel = new StorageModel();
     this.elemnt = new Element();
 
-
     // prevent the function to loose this contex
     this.bindEvent = this.bindEvent.bind(this);
     this.submitNewBook = this.submitNewBook.bind(this);
     this.bindDeleteEventForButtons = this.bindDeleteEventForButtons.bind(this);
     this.bindMoveEventForButtons = this.bindMoveEventForButtons.bind(this);
-    this.bindEditEventForButtons =this.bindEditEventForButtons.bind(this)
-    this.rebindButtonEvent=this.rebindButtonEvent.bind(this)
-
+    this.bindEditEventForButtons = this.bindEditEventForButtons.bind(this);
+    this.rebindButtonEvent = this.rebindButtonEvent.bind(this);
 
     this.deleteBook = this.deleteBook.bind(this);
     this.moveBook = this.moveBook.bind(this);
-    this.findBook=this.findBook.bind(this)
-    this.editBook=this.editBook.bind(this)
-
+    this.findBook = this.findBook.bind(this);
+    this.editBook = this.editBook.bind(this);
+    this.cancelUpdate = this.cancelUpdate.bind(this);
 
     this.customEvent = {
       bindMoveBook: "BINDMOVEBOOKEVENT",
       bindDeleteBook: "BINDMOVEBOOKEVENT",
-      bindEditBook:'BINDEDITBOOK'
+      bindEditBook: "BINDEDITBOOK",
     };
   }
 
@@ -54,7 +52,7 @@ class PageEvent {
 
     findBookForm.addEventListener("submit", this.findBook);
     newBookForm.addEventListener("submit", this.submitNewBook);
-    
+
     // create event to register event for move books action
     document.addEventListener(
       this.customEvent.bindMoveBook,
@@ -73,43 +71,48 @@ class PageEvent {
       this.bindDeleteEventForButtons
     );
 
+    document
+      .getElementById("cancel-update-button-id")
+      .addEventListener("click", this.cancelUpdate);
 
     this.showInCompleteBooks();
     this.showReadedBooks();
-    this.rebindButtonEvent()
+    this.rebindButtonEvent();
   }
 
-  rebindButtonEvent(){
+  rebindButtonEvent() {
     document.dispatchEvent(new Event(this.customEvent.bindDeleteBook));
     document.dispatchEvent(new Event(this.customEvent.bindMoveBook));
-    document.dispatchEvent(new Event(this.customEvent.bindEditBook))
+    document.dispatchEvent(new Event(this.customEvent.bindEditBook));
   }
 
-  showReadedBooks(customFilter= (obj) => true) {
+  showReadedBooks(customFilter = (obj) => true) {
     return this.showBooks("completedBookContainerId", true, customFilter);
   }
 
   findBook(event) {
     event.preventDefault();
     // clear book list
-    document.getElementById("inCompletedBookContainerId").innerHTML = "<h1>BELUM SELESAI DIBACA</h1>";
-    document.getElementById("completedBookContainerId").innerHTML = "<h1>SELESAI DIBACA</h1>";
+    document.getElementById("inCompletedBookContainerId").innerHTML =
+      "<h1>BELUM SELESAI DIBACA</h1>";
+    document.getElementById("completedBookContainerId").innerHTML =
+      "<h1>SELESAI DIBACA</h1>";
 
     let keyword = document.getElementById("keywordFilterId").value;
     let customFilter = (obj) => true;
 
     if (keyword) {
       customFilter = (obj) => {
-        return obj.title.toLowerCase().indexOf(keyword.toLowerCase()) !== -1};
+        return obj.title.toLowerCase().indexOf(keyword.toLowerCase()) !== -1;
+      };
     }
 
     this.showInCompleteBooks(customFilter);
     this.showReadedBooks(customFilter);
-    this.rebindButtonEvent()
+    this.rebindButtonEvent();
+  }
 
-    }
-
-  showInCompleteBooks(customFilter= (obj) => true) {
+  showInCompleteBooks(customFilter = (obj) => true) {
     return this.showBooks("inCompletedBookContainerId", false, customFilter);
   }
 
@@ -139,16 +142,17 @@ class PageEvent {
     formData.serialNum = serialNum;
     this.storageModel.saveNewBook(serialNum, formData);
     this.storageModel.updateBookList(serialNum);
-    
-    let newBookView=this.elemnt.book(formData)
-    if(formData.isCompleted){
-      document.getElementById('completedBookContainerId').innerHTML+=newBookView
+
+    let newBookView = this.elemnt.book(formData);
+    if (formData.isCompleted) {
+      document.getElementById("completedBookContainerId").innerHTML +=
+        newBookView;
+    } else {
+      document.getElementById("inCompletedBookContainerId").innerHTML +=
+        newBookView;
     }
-    else{
-      document.getElementById('inCompletedBookContainerId').innerHTML+=newBookView
-    }
-    
-    this.rebindButtonEvent()
+
+    this.rebindButtonEvent();
   }
 
   serializeBookForm() {
@@ -162,6 +166,10 @@ class PageEvent {
       newBookData.isCompleted = false;
     }
     return newBookData;
+  }
+  cancelUpdate() {
+    this.hideUpdateButtons();
+    this.resetNewBookForm();
   }
 
   bindMoveEventForButtons() {
@@ -178,7 +186,6 @@ class PageEvent {
     }
   }
 
-
   bindEditEventForButtons() {
     let moveButtons = document.getElementsByClassName("edit-book-button");
     for (let button of moveButtons) {
@@ -186,8 +193,56 @@ class PageEvent {
     }
   }
 
-  editBook  (){
-  console.log('haii')
+  editBook(event) {
+    let bookId = event.target.getAttribute("data-id");
+    let book = this.storageModel.getBook(bookId);
+    this.setFormValues(book);
+  }
+
+  setFormValues(book) {
+    // set data
+    let form = document.getElementById("newBookFormId");
+    form.title.value = book.title;
+    form.author.value = book.author;
+    form.year.value = book.year;
+    form.isCompleted.checked = book.isCompleted;
+
+    this.showUpdateButtons();
+  }
+
+  resetNewBookForm() {
+    // reset data
+    let form = document.getElementById("newBookFormId");
+    form.title.value = "";
+    form.author.value = "";
+    form.year.value = "";
+    form.isCompleted.checked = false;
+  }
+  showUpdateButtons() {
+    // show button
+    document.getElementById("update-book-button-id").removeAttribute("hidden");
+    document
+      .getElementById("cancel-update-button-id")
+      .removeAttribute("hidden");
+
+    // hide new data button
+    document
+      .getElementById("button-add-new-book-id")
+      .setAttribute("hidden", "hidden");
+  }
+
+  hideUpdateButtons() {
+    // show button
+    document.getElementById("button-add-new-book-id").removeAttribute("hidden");
+
+    //  hide
+    document
+      .getElementById("cancel-update-button-id")
+      .setAttribute("hidden", "hidden");
+
+    document
+      .getElementById("update-book-button-id")
+      .setAttribute("hidden", "hidden");
   }
 
   deleteBook(event) {
@@ -214,15 +269,16 @@ class PageEvent {
     let parentContainerName = containerElement.parentElement.getAttribute("id");
 
     if (parentContainerName == "inCompletedBookContainerId") {
-      
-      copyOfContainerElement.getElementsByClassName('move-book-button')[0].innerText='Belum dibaca'
+      copyOfContainerElement.getElementsByClassName(
+        "move-book-button"
+      )[0].innerText = "Belum dibaca";
       document
         .getElementById("completedBookContainerId")
         .appendChild(copyOfContainerElement);
     } else {
-
-
-      copyOfContainerElement.getElementsByClassName('move-book-button')[0].innerText='Sudah dibaca'
+      copyOfContainerElement.getElementsByClassName(
+        "move-book-button"
+      )[0].innerText = "Sudah dibaca";
       document
         .getElementById("inCompletedBookContainerId")
         .appendChild(copyOfContainerElement);
@@ -230,7 +286,7 @@ class PageEvent {
     containerElement.remove();
 
     // Element the move to another place lose his event, we need to rebind them.
-    this.rebindButtonEvent()
+    this.rebindButtonEvent();
   }
 }
 
@@ -278,6 +334,9 @@ class StorageModel {
 
     // update book
     localStorage.setItem(this.keys.bookList, JSON.stringify(booksId));
+  }
+  getBook(bookId) {
+    return JSON.parse(localStorage.getItem(this.keys.bookIdPrefix + bookId));
   }
   updateCompletedStatus(bookId) {
     let book = JSON.parse(
