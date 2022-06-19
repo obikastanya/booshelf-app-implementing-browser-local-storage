@@ -1,6 +1,10 @@
+body {
+  margin: 0;
+}
 .d-block {
   display: block;
 }
+
 .filler-height {
   height: 300px;
 }
