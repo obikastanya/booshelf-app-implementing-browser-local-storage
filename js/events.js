@@ -11,6 +11,8 @@ class Element {
       <p>Tahun : ${bookData.year}</p>
       <button class="black-button move-book-button" data-id=${bookData.serialNum} 
       container-id='container-${bookData.serialNum}'>${moveButtonLabel}</button>
+      <button class="yellow-button edit-book-button" data-id=${bookData.serialNum} 
+      container-id='container-${bookData.serialNum}'>Edit</button>
       <button class="white-button delete-book-button" data-id=${bookData.serialNum} 
       container-id='container-${bookData.serialNum}'>Hapus</button>
     </div>
@@ -22,18 +24,27 @@ class PageEvent {
   constructor() {
     this.storageModel = new StorageModel();
     this.elemnt = new Element();
+
+
     // prevent the function to loose this contex
     this.bindEvent = this.bindEvent.bind(this);
     this.submitNewBook = this.submitNewBook.bind(this);
     this.bindDeleteEventForButtons = this.bindDeleteEventForButtons.bind(this);
     this.bindMoveEventForButtons = this.bindMoveEventForButtons.bind(this);
+    this.bindEditEventForButtons =this.bindEditEventForButtons.bind(this)
+    this.rebindButtonEvent=this.rebindButtonEvent.bind(this)
+
+
     this.deleteBook = this.deleteBook.bind(this);
     this.moveBook = this.moveBook.bind(this);
     this.findBook=this.findBook.bind(this)
+    this.editBook=this.editBook.bind(this)
+
 
     this.customEvent = {
       bindMoveBook: "BINDMOVEBOOKEVENT",
       bindDeleteBook: "BINDMOVEBOOKEVENT",
+      bindEditBook:'BINDEDITBOOK'
     };
   }
 
@@ -43,10 +54,17 @@ class PageEvent {
 
     findBookForm.addEventListener("submit", this.findBook);
     newBookForm.addEventListener("submit", this.submitNewBook);
+    
     // create event to register event for move books action
     document.addEventListener(
       this.customEvent.bindMoveBook,
       this.bindMoveEventForButtons
+    );
+
+    // create event to register event for edit books action
+    document.addEventListener(
+      this.customEvent.bindEditBook,
+      this.bindEditEventForButtons
     );
 
     //create event to register event to delete book action
@@ -58,10 +76,13 @@ class PageEvent {
 
     this.showInCompleteBooks();
     this.showReadedBooks();
-    
+    this.rebindButtonEvent()
+  }
+
+  rebindButtonEvent(){
     document.dispatchEvent(new Event(this.customEvent.bindDeleteBook));
     document.dispatchEvent(new Event(this.customEvent.bindMoveBook));
-  
+    document.dispatchEvent(new Event(this.customEvent.bindEditBook))
   }
 
   showReadedBooks(customFilter= (obj) => true) {
@@ -79,15 +100,13 @@ class PageEvent {
 
     if (keyword) {
       customFilter = (obj) => {
-        return obj.title.toLowerCase().indexOf(keyword) !== -1};
+        return obj.title.toLowerCase().indexOf(keyword.toLowerCase()) !== -1};
     }
 
     this.showInCompleteBooks(customFilter);
     this.showReadedBooks(customFilter);
+    this.rebindButtonEvent()
 
-
-    document.dispatchEvent(new Event(this.customEvent.bindDeleteBook));
-    document.dispatchEvent(new Event(this.customEvent.bindMoveBook));
     }
 
   showInCompleteBooks(customFilter= (obj) => true) {
@@ -129,10 +148,7 @@ class PageEvent {
       document.getElementById('inCompletedBookContainerId').innerHTML+=newBookView
     }
     
-    document.dispatchEvent(new Event(this.customEvent.bindDeleteBook));
-    document.dispatchEvent(new Event(this.customEvent.bindMoveBook));
-    
-
+    this.rebindButtonEvent()
   }
 
   serializeBookForm() {
@@ -160,6 +176,18 @@ class PageEvent {
     for (let button of moveButtons) {
       button.onclick = this.deleteBook;
     }
+  }
+
+
+  bindEditEventForButtons() {
+    let moveButtons = document.getElementsByClassName("edit-book-button");
+    for (let button of moveButtons) {
+      button.onclick = this.editBook;
+    }
+  }
+
+  editBook  (){
+  console.log('haii')
   }
 
   deleteBook(event) {
@@ -202,8 +230,7 @@ class PageEvent {
     containerElement.remove();
 
     // Element the move to another place lose his event, we need to rebind them.
-    document.dispatchEvent(new Event(this.customEvent.bindDeleteBook));
-    document.dispatchEvent(new Event(this.customEvent.bindMoveBook));
+    this.rebindButtonEvent()
   }
 }
 
